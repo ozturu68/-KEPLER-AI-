@@ -1,0 +1,86 @@
+# ===================================================================
+# Flake8 Konfigürasyonu
+# ===================================================================
+# Flake8 TOML desteklemediği için ayrı INI dosyası gerekli
+# Python kod kalitesi ve stil kontrolü
+
+[flake8]
+# Maksimum satır uzunluğu (black ile aynı)
+max-line-length = 100
+
+# Karmaşıklık limiti (McCabe)
+max-complexity = 10
+
+# Black ve modern Python ile çakışan kuralları yoksay
+ignore = 
+    # E203: whitespace before ':' (black ile çakışır)
+    E203,
+    # E266: too many leading '#' for block comment
+    E266,
+    # E501: line too long (black halledecek)
+    E501,
+    # W503: line break before binary operator (PEP 8 güncellemesi)
+    W503,
+    # W504: line break after binary operator
+    W504
+
+# Kontrol edilecek hata kodları (eklentiler dahil)
+select = 
+    # Pycodestyle hataları ve uyarıları
+    E,
+    W,
+    # Pyflakes hataları
+    F,
+    # McCabe karmaşıklık
+    C,
+    # flake8-bugbear (yaygın hatalar)
+    B,
+    B9,
+    # flake8-docstrings (docstring kontrolü)
+    D
+
+# Hariç tutulacak dizinler
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .tox,
+    .eggs,
+    *.egg,
+    build,
+    dist,
+    .mypy_cache,
+    .pytest_cache,
+    .ruff_cache,
+    htmlcov,
+    # Jupyter notebook çıktıları
+    .ipynb_checkpoints,
+    # DVC cache (varsa)
+    .dvc
+
+# Dosya başına maksimum hata sayısı
+per-file-ignores =
+    # __init__.py dosyalarında unused import'a izin ver
+    __init__.py:F401,F403,
+    # Test dosyalarında docstring zorunlu değil
+    tests/*:D100,D101,D102,D103,D104,
+    # Scripts'te docstring zorunlu değil
+    scripts/*:D100,D103,
+    # Config dosyaları
+    config/*:D100,
+    # Setup dosyası
+    setup.py:D100,
+
+# Docstring konvansiyonu (numpy, google, pep257)
+docstring-convention = numpy
+
+# İstatistikleri göster
+statistics = True
+
+# Sayıları göster
+count = True
+
+# Hataları detaylı göster
+show-source = True

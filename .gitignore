@@ -1,0 +1,152 @@
+# ==========================================================
+# EXOPLANET-ML PROJESİ .GITIGNORE
+# Strateji: Güçlü Yerel (1TB SSD) / DVC YOK
+# ==========================================================
+
+# 1. YEREL VERİ ve MODELLER (EN ÖNEMLİ BÖLÜM)
+# ----------------------------------------------------------
+# 1TB diskimizde kalacak ham, işlenmiş ve dış veriler
+data/raw/*
+data/processed/*
+data/external/*
+
+# Model çıktıları, checkpoint'ler ve eğitilmiş modeller
+models/experiments/*
+models/production/*
+models/registry/
+
+# Sonuçlar, loglar, raporlar ve áfigurler
+results/logs/*
+results/figures/*
+results/reports/*
+*.log
+*.out
+
+# İstisna: Örnek (sample) veri setimizin Git'e dahil olmasına
+# izin ver, böylece CI/CD veya Colab'da kullanılabilir.
+!data/sample/sample_koi.csv
+
+# İstisna: Boş klasörlerin Git'te görünmesi için .gitkeep
+# dosyalarına izin ver (bu kurallar yoksayılmayı engeller).
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+!models/experiments/.gitkeep
+!models/production/.gitkeep
+!results/logs/.gitkeep
+!results/figures/.gitkeep
+!results/reports/.gitkeep
+
+# ==========================================================
+# PYTHON (VENV, CACHE, BUILD)
+# ==========================================================
+# Sanal ortam (venv)
+/venv/
+/env/
+/.venv/
+
+# Python önbelleği ve derlenmiş dosyalar
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Build/Dağıtım paketleri
+/build/
+/dist/
+/downloads/
+/eggs/
+.eggs/
+/lib/
+/lib64/
+/parts/
+/sdist/
+/var/
+/wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ==========================================================
+# TEST & KALİTE KONTROL RAPORLARI
+# ==========================================================
+.pytest_cache/
+.coverage
+/htmlcov/
+*.cover
+.hypothesis/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ==========================================================
+# IDE & ORTAM DOSYALARI
+# ==========================================================
+# Ortam değişkenleri
+.env
+.env.*
+!.env.example
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# IntelliJ / PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# ==========================================================
+# GİZLİ (SECRET) DOSYALAR & ALTYAPI
+# ==========================================================
+# Güvenlik sertifikaları, anahtarlar
+*.pem
+*.key
+*.cert
+*.crt
+/secrets/
+/credentials/
+*.credentials
+
+# Terraform durum (state) dosyaları (Gizli veri içerir!)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfvars
+
+# =liht=
+# İŞLETİM SİSTEMİ DOSYALARI
+# ==========================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==========================================================
+# DİĞER ARAÇLAR
+# ==========================================================
+# Deney (Experiment) takibi
+mlruns/
+.mlflow/
+wandb/
+.neptune/
+
+# Dokümantasyon (MkDocs build çıktısı)
+/site/
+
+# Yedek dosyalar
+*.bak
+*.swp
+*.tmp
+*~

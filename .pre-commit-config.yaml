@@ -1,0 +1,121 @@
+# ==========================================================
+# EXOPLANET-ML PROJESİ: OTOMATİK KALİTE KONTROL KAPISI
+# ==========================================================
+# Bu dosya, `git commit` öncesi tüm kalite kontrollerini
+# (format, lint, tip, güvenlik) otomatik olarak çalıştırır.
+#
+# Kurallar (line-length, ignore vb.) 'pyproject.toml'
+# dosyasından merkezi olarak okunur.
+# ==========================================================
+
+repos:
+  # --------------------------------------------------------
+  # TEMEL KANCALAR (Genel dosya kontrolleri)
+  # --------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # --- Dosya Bütünlüğü ---
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-docstring-first
+
+      # --- Yapılandırma Dosyaları ---
+      - id: check-yaml
+        args: [--safe]
+      - id: check-json
+      - id: check-toml
+
+      # --- Güvenlik & Veri Sızıntısı Engelleme ---
+      - id: check-added-large-files
+        # "Güçlü Yerel" stratejimiz için 2. savunma hattı.
+        # 10MB'tan (10000 KB) büyük dosyaları engeller.
+        args: ['--maxkb=10000']
+      - id: detect-private-key
+
+  # --------------------------------------------------------
+  # KOD FORMATLAMA (Black & isort)
+  # --------------------------------------------------------
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+        # ARGS YOK: Kurallar 'pyproject.toml' [tool.black]
+        # bölümünden otomatik olarak okunacak.
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        # ARGS YOK: Kurallar 'pyproject.toml' [tool.isort]
+        # bölümünden otomatik olarak okunacak.
+
+  # --------------------------------------------------------
+  # KOD DENETLEME (Flake8 Linter)
+  # --------------------------------------------------------
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        # ARGS YOK: Kurallar 'pyproject.toml' [tool.flake8]
+        # bölümünden otomatik olarak okunacak.
+        # Kancanın çalışması için eklentilerin burada da
+        # tanımlanması gerekir.
+        additional_dependencies: [
+          'flake8-docstrings',
+          'flake8-bugbear',
+          'flake8-comprehensions',
+        ]
+
+  # --------------------------------------------------------
+  # STATİK TİP KONTROLÜ (MyPy)
+  # --------------------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        # ARGS YOK: Kurallar 'pyproject.toml' [tool.mypy]
+        # bölümündeki KATI ayarlardan okunacak.
+        # 'types-*' bağımlılıkları, kancanın kendi ortamı
+        # için gereklidir.
+        additional_dependencies: [
+          'types-requests',
+          'types-PyYAML',
+          'types-python-dateutil',
+          'pandas-stubs'
+        ]
+
+  # --------------------------------------------------------
+  # GÜVENLİK KONTROLÜ (Bandit)
+  # --------------------------------------------------------
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.6
+    hooks:
+      - id: bandit
+        # Bandit'e ayarları nereden okuyacağını açıkça söylüyoruz.
+        args: ['-c', 'pyproject.toml']
+        additional_dependencies: ['bandit[toml]']
+
+  # --------------------------------------------------------
+  # JUPYTER NOTEBOOK KALİTESİ (nbQA)
+  # --------------------------------------------------------
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.7.1
+    hooks:
+      - id: nbqa-black
+        # ARGS YOK: 'pyproject.toml' [tool.black] ayarlarını kullanacak.
+      - id: nbqa-isort
+        # ARGS YOK: 'pyproject.toml' [tool.isort] ayarlarını kullanacak.
+      - id: nbqa-flake8
+        # ARGS YOK: 'pyproject.toml' [tool.flake8] ayarlarını kullanacak.
+        additional_dependencies: [
+          'flake8-docstrings',
+          'flake8-bugbear',
+          'flake8-comprehensions',
+        ]
