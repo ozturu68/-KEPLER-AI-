@@ -11,20 +11,20 @@ Available Models:
 
 Usage:
     >>> from src.models import CatBoostModel
-    >>> 
+    >>>
     >>> # Model oluştur
     >>> model = CatBoostModel(iterations=500, learning_rate=0.05)
-    >>> 
+    >>>
     >>> # Train et
     >>> model.fit(X_train, y_train, X_val, y_val)
-    >>> 
+    >>>
     >>> # Tahmin yap
     >>> predictions = model.predict(X_test)
     >>> probabilities = model.predict_proba(X_test)
-    >>> 
+    >>>
     >>> # Feature importance
     >>> importance = model.get_feature_importance()
-    >>> 
+    >>>
     >>> # Model kaydet
     >>> model.save("models/catboost_20251111.pkl")
 
@@ -57,30 +57,27 @@ AVAILABLE_MODELS = {
 def get_model(model_name: str, **params):
     """
     Model factory - Model isminden model objesi oluştur.
-    
+
     Args:
         model_name: Model ismi ('catboost', 'lightgbm', 'xgboost', 'rf')
         **params: Model hyperparametreleri
-        
+
     Returns:
         BaseModel: Model objesi
-        
+
     Raises:
         ValueError: Geçersiz model ismi
-        
+
     Example:
         >>> model = get_model("catboost", iterations=500)
         >>> model.fit(X_train, y_train)
     """
     model_name = model_name.lower()
-    
+
     if model_name not in AVAILABLE_MODELS:
         available = ", ".join(AVAILABLE_MODELS.keys())
-        raise ValueError(
-            f"Geçersiz model ismi: '{model_name}'. "
-            f"Mevcut modeller: {available}"
-        )
-    
+        raise ValueError(f"Geçersiz model ismi: '{model_name}'. " f"Mevcut modeller: {available}")
+
     model_class = AVAILABLE_MODELS[model_name]
     return model_class(**params)
 
@@ -88,10 +85,10 @@ def get_model(model_name: str, **params):
 def list_models():
     """
     Mevcut model'ları listele.
-    
+
     Returns:
         list: Model isimleri
-        
+
     Example:
         >>> models = list_models()
         >>> print("Available models:", models)

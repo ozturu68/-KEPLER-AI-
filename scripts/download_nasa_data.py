@@ -7,7 +7,7 @@ tablosunu indirir ve yerel 'data/raw/' dizinine kaydeder.
 
 Kullanım:
     python scripts/download_nasa_data.py
-    
+
     # Veya Makefile ile:
     make download-data
 
@@ -17,17 +17,18 @@ Ortam Değişkenleri:
 
 import os
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 # Proje kök dizinini Python path'e ekle
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+import pandas as pd
+
 # Standart kütüphaneler
 import requests
-import pandas as pd
 from dotenv import load_dotenv
 from tqdm import tqdm
 
@@ -35,13 +36,12 @@ from tqdm import tqdm
 from src.core import (
     DATA_RAW,
     NASA_API_BASE_URL,
-    NASA_TABLE_NAME,
     NASA_OUTPUT_FORMAT,
+    NASA_TABLE_NAME,
     TARGET_COLUMN,
     DataDownloadError,
     DataValidationError,
 )
-
 
 # ============================================
 # KONFİGÜRASYON
@@ -60,6 +60,7 @@ TIMEOUT_SECONDS = 300  # 5 dakika
 # YARDIMCI FONKSİYONLAR
 # ============================================
 
+
 def print_header():
     """Script başlığını yazdır."""
     print("=" * 70)
@@ -75,7 +76,7 @@ def print_header():
 def check_prerequisites():
     """Ön gereksinimleri kontrol et."""
     print("🔍 Ön kontroller yapılıyor...")
-    
+
     # Data dizini var mı?
     if not DATA_RAW.exists():
         print(f"  ⚠️  {DATA_RAW} dizini bulunamadı, oluşturuluyor...")
@@ -83,7 +84,7 @@ def check_prerequisites():
         print(f"  ✓ Dizin oluşturuldu: {DATA_RAW}")
     else:
         print(f"  ✓ Data dizini mevcut: {DATA_RAW}")
-    
+
     # Eski dosya var mı?
     if OUTPUT_FILE.exists():
         file_size = OUTPUT_FILE.stat().st_size / (1024 * 1024)  # MB
@@ -91,27 +92,27 @@ def check_prerequisites():
         print(f"  ⚠️  Mevcut dosya bulundu:")
         print(f"     Boyut: {file_size:.2f} MB")
         print(f"     Tarih: {file_mtime.strftime('%Y-%m-%d %H:%M:%S')}")
-        
+
         response = input("  ❓ Üzerine yazmak istiyor musunuz? [y/N]: ")
-        if response.lower() != 'y':
+        if response.lower() != "y":
             print("  ℹ️  İndirme iptal edildi.")
             sys.exit(0)
         print("  ✓ Eski dosya silinecek")
-    
+
     # API anahtarı kontrolü
     if NASA_API_KEY == "DEMO_KEY":
         print("  ⚠️  DEMO_KEY kullanılıyor (günde 30 request limiti)")
         print("     Gerçek API key için: https://api.nasa.gov/")
     else:
         print(f"  ✓ API Key yapılandırılmış")
-    
+
     print()
 
 
 def build_api_url() -> str:
     """
     NASA Exoplanet Archive API URL'ini oluştur.
-    
+
     Returns:
         str: Tam API URL
     """
@@ -120,67 +121,59 @@ def build_api_url() -> str:
         "format": NASA_OUTPUT_FORMAT,
         "select": "*",  # Tüm sütunları al
     }
-    
+
     # URL parametrelerini oluştur
     param_str = "&".join([f"{k}={v}" for k, v in params.items()])
     url = f"{NASA_API_BASE_URL}?{param_str}"
-    
+
     return url
 
 
-def download_data(url: str) -> Optional[str]:
+def download_data(url: str) -> str | None:
     """
     NASA API'den veri indir.
-    
+
     Args:
         url: İndirme URL'i
-        
+
     Returns:
         str: İndirilen CSV verisi (string)
-        
+
     Raises:
         DataDownloadError: İndirme başarısız olursa
     """
     print("📥 Veri indiriliyor...")
     print(f"   URL: {url}")
     print()
-    
+
     try:
         # Request gönder (stream=True ile progress bar için)
         response = requests.get(url, timeout=TIMEOUT_SECONDS, stream=True)
         response.raise_for_status()
-        
+
         # Total boyutu al (varsa)
-        total_size = int(response.headers.get('content-length', 0))
-        
+        total_size = int(response.headers.get("content-length", 0))
+
         # Progress bar ile indir
         chunk_size = 8192  # 8KB chunks
         chunks = []
-        
-        with tqdm(
-            total=total_size,
-            unit='B',
-            unit_scale=True,
-            desc='  İndiriliyor',
-            ncols=80
-        ) as pbar:
+
+        with tqdm(total=total_size, unit="B", unit_scale=True, desc="  İndiriliyor", ncols=80) as pbar:
             for chunk in response.iter_content(chunk_size=chunk_size):
                 if chunk:
                     chunks.append(chunk)
                     pbar.update(len(chunk))
-        
+
         # Tüm chunk'ları birleştir
-        data = b''.join(chunks).decode('utf-8')
-        
+        data = b"".join(chunks).decode("utf-8")
+
         print(f"  ✓ İndirme tamamlandı: {len(data) / (1024*1024):.2f} MB")
         print()
-        
+
         return data
-        
+
     except requests.exceptions.Timeout:
-        raise DataDownloadError(
-            f"İndirme zaman aşımına uğradı ({TIMEOUT_SECONDS}s)"
-        )
+        raise DataDownloadError(f"İndirme zaman aşımına uğradı ({TIMEOUT_SECONDS}s)")
     except requests.exceptions.RequestException as e:
         raise DataDownloadError(f"İndirme hatası: {str(e)}")
     except Exception as e:
@@ -190,65 +183,63 @@ def download_data(url: str) -> Optional[str]:
 def validate_data(df: pd.DataFrame):
     """
     İndirilen veriyi doğrula.
-    
+
     Args:
         df: Pandas DataFrame
-        
+
     Raises:
         DataValidationError: Doğrulama başarısız olursa
     """
     print("🔍 Veri doğrulaması yapılıyor...")
-    
+
     # Boş mu?
     if df.empty:
         raise DataValidationError("DataFrame boş!")
-    
+
     print(f"  ✓ Satır sayısı: {len(df):,}")
     print(f"  ✓ Sütun sayısı: {len(df.columns)}")
-    
+
     # Target sütunu var mı?
     if TARGET_COLUMN not in df.columns:
-        raise DataValidationError(
-            f"Target sütunu '{TARGET_COLUMN}' bulunamadı!"
-        )
+        raise DataValidationError(f"Target sütunu '{TARGET_COLUMN}' bulunamadı!")
     print(f"  ✓ Target sütunu mevcut: {TARGET_COLUMN}")
-    
+
     # Target dağılımı
     target_dist = df[TARGET_COLUMN].value_counts()
     print(f"  ✓ Target dağılımı:")
     for value, count in target_dist.items():
         pct = (count / len(df)) * 100
         print(f"     {value}: {count:,} (%{pct:.1f})")
-    
+
     # Missing values
     total_missing = df.isnull().sum().sum()
     missing_pct = (total_missing / (len(df) * len(df.columns))) * 100
     print(f"  ✓ Toplam eksik değer: {total_missing:,} (%{missing_pct:.1f})")
-    
+
     # Memory kullanımı
     memory_mb = df.memory_usage(deep=True).sum() / (1024 * 1024)
     print(f"  ✓ Memory kullanımı: {memory_mb:.2f} MB")
-    
+
     print()
 
 
 def save_data(data: str, output_path: Path):
     """
     Veriyi dosyaya kaydet.
-    
+
     Args:
         data: CSV verisi (string)
         output_path: Kayıt yolu
     """
     print(f"💾 Veri kaydediliyor: {output_path}")
-    
+
     # Dizin yoksa oluştur
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     # Dosyaya yaz
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(data)
-    
+
     # Dosya boyutunu göster
     file_size = output_path.stat().st_size / (1024 * 1024)
     print(f"  ✓ Kaydedildi: {file_size:.2f} MB")
@@ -258,7 +249,7 @@ def save_data(data: str, output_path: Path):
 def print_summary(df: pd.DataFrame, elapsed_time: float):
     """
     Özet bilgileri yazdır.
-    
+
     Args:
         df: Pandas DataFrame
         elapsed_time: Geçen süre (saniye)
@@ -284,62 +275,60 @@ def print_summary(df: pd.DataFrame, elapsed_time: float):
 # ANA FONKSİYON
 # ============================================
 
+
 def main():
     """Ana indirme fonksiyonu."""
     from time import time
-    
+
     start_time = time()
-    
+
     try:
         # Başlık
         print_header()
-        
+
         # Ön kontroller
         check_prerequisites()
-        
+
         # API URL'i oluştur
         url = build_api_url()
-        
+
         # Veriyi indir
         data = download_data(url)
-        
+
         # CSV'yi pandas'a yükle
         print("📊 Veri parse ediliyor...")
-        df = pd.read_csv(
-            pd.io.common.StringIO(data),
-            comment='#',  # Yorum satırlarını atla
-            low_memory=False
-        )
+        df = pd.read_csv(pd.io.common.StringIO(data), comment="#", low_memory=False)  # Yorum satırlarını atla
         print(f"  ✓ Parse tamamlandı")
         print()
-        
+
         # Doğrulama
         validate_data(df)
-        
+
         # Kaydet
         save_data(data, OUTPUT_FILE)
-        
+
         # Özet
         elapsed_time = time() - start_time
         print_summary(df, elapsed_time)
-        
+
         return 0
-        
+
     except DataDownloadError as e:
         print(f"\n❌ İndirme hatası: {e}")
         return 1
-        
+
     except DataValidationError as e:
         print(f"\n❌ Doğrulama hatası: {e}")
         return 1
-        
+
     except KeyboardInterrupt:
         print("\n\n⚠️  İndirme kullanıcı tarafından iptal edildi.")
         return 130
-        
+
     except Exception as e:
         print(f"\n❌ Beklenmeyen hata: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

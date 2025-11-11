@@ -46,20 +46,16 @@ NASA_OUTPUT_FORMAT = "csv"
 # ============================================
 TARGET_COLUMN = "koi_disposition"
 
-TARGET_VALUES: Dict[str, int] = {
-    "CONFIRMED": 2,
-    "CANDIDATE": 1,
-    "FALSE POSITIVE": 0
-}
+TARGET_VALUES: dict[str, int] = {"CONFIRMED": 2, "CANDIDATE": 1, "FALSE POSITIVE": 0}
 
 # Kategorik özellikler
-CATEGORICAL_FEATURES: List[str] = [
+CATEGORICAL_FEATURES: list[str] = [
     "koi_disposition",
     "koi_pdisposition",
 ]
 
 # Sayısal özellikler (core)
-NUMERICAL_FEATURES: List[str] = [
+NUMERICAL_FEATURES: list[str] = [
     "koi_period",
     "koi_time0bk",
     "koi_impact",
@@ -77,7 +73,7 @@ NUMERICAL_FEATURES: List[str] = [
 ]
 
 # Kullanılmayacak sütunlar
-DROP_COLUMNS: List[str] = [
+DROP_COLUMNS: list[str] = [
     "rowid",
     "kepid",
     "kepler_name",
@@ -146,7 +142,7 @@ XGBOOST_PARAMS = {
 # ============================================
 # PERFORMANS METRİKLERİ
 # ============================================
-METRICS_TO_TRACK: List[str] = [
+METRICS_TO_TRACK: list[str] = [
     "accuracy",
     "precision_weighted",
     "recall_weighted",

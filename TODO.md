@@ -13,12 +13,12 @@ Tamamlanan Fazlar: 7/13
 Devam Eden Faz: Faz 2 - Veri İndirme & EDA
 ```
 
-| Faz | Durum | Tamamlanma | Son Güncelleme |
-|-----|-------|-----------|----------------|
-| Faz 0 | ✅ Tamamlandı | 100% | 2024-11-09 |
-| Faz 1 | ✅ Tamamlandı | 100% | 2024-11-09 |
-| Faz 2 | 🔄 Devam Ediyor | 25% | 2024-11-09 |
-| Faz 3-13 | ⏳ Bekliyor | 0% | - |
+| Faz      | Durum           | Tamamlanma | Son Güncelleme |
+| -------- | --------------- | ---------- | -------------- |
+| Faz 0    | ✅ Tamamlandı   | 100%       | 2024-11-09     |
+| Faz 1    | ✅ Tamamlandı   | 100%       | 2024-11-09     |
+| Faz 2    | 🔄 Devam Ediyor | 25%        | 2024-11-09     |
+| Faz 3-13 | ⏳ Bekliyor     | 0%         | -              |
 
 ---
 
@@ -30,7 +30,7 @@ Devam Eden Faz: Faz 2 - Veri İndirme & EDA
 
 ### Tamamlanan Görevler
 
-- [x] Pop!_OS sistem kurulumu
+- [x] Pop!\_OS sistem kurulumu
 - [x] Python 3.8+ kurulumu
 - [x] VS Codium kurulumu
 - [x] Git yapılandırması
@@ -39,6 +39,7 @@ Devam Eden Faz: Faz 2 - Veri İndirme & EDA
 - [x] Pre-commit hooks kurulumu
 
 ### Notlar
+
 - 16GB RAM, i5 12. nesil, RTX 3050 4GB
 - 1TB SSD - Hibrit yerel depolama stratejisi
 
@@ -69,6 +70,7 @@ Devam Eden Faz: Faz 2 - Veri İndirme & EDA
 ### Değişiklikler
 
 **Hibrit Depolama Stratejisi:**
+
 - ❌ DVC kaldırıldı (gereksiz, 1TB SSD yeterli)
 - ✅ Yerel depolama (data/, models/, results/)
 - ✅ Git sadece kod için
@@ -93,6 +95,7 @@ Devam Eden Faz: Faz 2 - Veri İndirme & EDA
 - [ ] Veri validasyonu (satır/sütun sayısı, veri tipleri)
 
 **Hedef Veriler:**
+
 ```
 - Kayıt Sayısı: ~9,000-10,000 KOI
 - Sütun Sayısı: ~50-100 feature
@@ -277,6 +280,7 @@ results/figures/feature_importance.png
 - [ ] Grid search (opsiyonel)
 
 **Tuning Parameters:**
+
 ```python
 {
     'iterations': [500, 1000, 1500],
@@ -368,6 +372,7 @@ results/figures/training_curves.png
 ```
 
 **Hedef Metrikler:**
+
 - Accuracy: >85%
 - F1-Score (CONFIRMED): >80%
 - ROC-AUC: >0.90
@@ -394,7 +399,7 @@ results/figures/training_curves.png
 ### 6.2 Feature Importance
 
 - [ ] `src/explainability/feature_importance.py` implementasyonu
-- [ ] Built-in feature importance (model.feature_importances_)
+- [ ] Built-in feature importance (model.feature*importances*)
 - [ ] Permutation importance
 - [ ] Feature importance visualization
 
@@ -625,6 +630,7 @@ Streamlit App: http://localhost:8501
 - [ ] Training time tracking
 
 **Format:**
+
 ```json
 {
   "experiment_id": "exp_001",
@@ -724,22 +730,26 @@ Streamlit App: http://localhost:8501
 ## 💡 Gelecek İyileştirmeler
 
 ### Veri & Features
+
 - [ ] Ek veri kaynakları (TESS, K2)
 - [ ] Deep learning features (CNN)
 - [ ] Time-series analysis
 
 ### Modeller
+
 - [ ] AutoML (H2O.ai, AutoGluon)
 - [ ] Neural Networks (TabNet)
 - [ ] Ensemble optimization
 
 ### MLOps
+
 - [ ] MLflow entegrasyonu (ileride)
 - [ ] A/B testing framework
 - [ ] Active learning pipeline
 - [ ] Model retraining automation
 
 ### Deployment
+
 - [ ] Kubernetes production deployment
 - [ ] Auto-scaling
 - [ ] Blue-green deployment
@@ -782,25 +792,26 @@ main              # Production-ready kod
 
 ## 📊 Milestone'lar
 
-| Milestone | Hedef Tarih | Durum |
-|-----------|-------------|-------|
-| **M1**: Veri Hazırlığı (Faz 2-3) | 2024-11-30 | 🔄 Devam Ediyor |
-| **M2**: Model Geliştirme (Faz 4-6) | 2024-12-31 | ⏳ Bekliyor |
-| **M3**: Web Servisleri (Faz 7-8) | 2025-01-15 | ⏳ Bekliyor |
-| **M4**: Testing & Deployment (Faz 9-10) | 2025-01-31 | ⏳ Bekliyor |
-| **M5**: Production Release (v1.0.0) | 2025-02-15 | ⏳ Bekliyor |
+| Milestone                               | Hedef Tarih | Durum           |
+| --------------------------------------- | ----------- | --------------- |
+| **M1**: Veri Hazırlığı (Faz 2-3)        | 2024-11-30  | 🔄 Devam Ediyor |
+| **M2**: Model Geliştirme (Faz 4-6)      | 2024-12-31  | ⏳ Bekliyor     |
+| **M3**: Web Servisleri (Faz 7-8)        | 2025-01-15  | ⏳ Bekliyor     |
+| **M4**: Testing & Deployment (Faz 9-10) | 2025-01-31  | ⏳ Bekliyor     |
+| **M5**: Production Release (v1.0.0)     | 2025-02-15  | ⏳ Bekliyor     |
 
 ---
 
 ## 🐛 Bilinen Sorunlar
 
-*(Şu an yok - geliştirme ilerledikçe listelenecek)*
+_(Şu an yok - geliştirme ilerledikçe listelenecek)_
 
 ---
 
 ## 📞 Destek & İletişim
 
 Herhangi bir sorun veya öneri için:
+
 - **GitHub Issues**: Bug raporları ve feature request'ler
 - **GitHub Discussions**: Genel sorular ve tartışmalar
 
@@ -812,4 +823,4 @@ Herhangi bir sorun veya öneri için:
 
 ---
 
-*Bu roadmap canlı bir dokümandır ve proje ilerledikçe güncellenecektir.*
+_Bu roadmap canlı bir dokümandır ve proje ilerledikçe güncellenecektir._
