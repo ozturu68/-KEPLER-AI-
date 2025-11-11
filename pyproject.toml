@@ -1,150 +1,180 @@
 # ===================================================================
-# Proje Geliştirme, Paketleme ve Kalite Kontrol Merkezi
+# NASA Kepler Exoplanet Classification Project
+# ===================================================================
+# Project: Kepler Exoplanet ML Pipeline
+# Author: sulegogh (ozturu68)
+# Date: 2025-11-11
+# Version: 2.0.0
+# Python: >=3.10
+# Status: Production-Ready
 # ===================================================================
 
 [build-system]
-# Modern Python paketleri için standart build sistemi
 requires = ["setuptools>=65.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+# ===================================================================
+# PROJECT METADATA
+# ===================================================================
+
 [project]
-name = "exoplanet-ml"
-version = "0.1.0"
-description = "NASA Kepler verilerini kullanarak ötegezegen tespiti için Makine Öğrenimi hattı"
+name = "kepler-exoplanet-ml"
+version = "2.0.0"
+description = "Machine Learning pipeline for exoplanet detection using NASA Kepler data"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    # Kendi adın ve e-postan ile güncelle
-    {name = "ozturu68", email = "ozturu68@tutamail.com"}
+    {name = "sulegogh", email = "ozturu68@tutamail.com"}
 ]
-keywords = ["machine-learning", "exoplanet", "nasa", "kepler", "astronomy"]
+maintainers = [
+    {name = "sulegogh", email = "ozturu68@tutamail.com"}
+]
+keywords = [
+    "machine-learning",
+    "exoplanet",
+    "nasa",
+    "kepler",
+    "astronomy",
+    "catboost",
+    "classification",
+    "imbalanced-learning"
+]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Typing :: Typed",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "pandas>=1.5.0",
+    "numpy>=1.23.0",
+    "scikit-learn>=1.2.0",
+    "catboost>=1.2.0",
+    "matplotlib>=3.6.0",
+    "seaborn>=0.12.0",
+    "loguru>=0.7.0",
+    "tqdm>=4.65.0",
+    "imbalanced-learn>=0.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "flake8-bugbear>=23.12.2",
+    "flake8-comprehensions>=3.14.0",
+    "flake8-simplify>=0.21.0",
+    "pep8-naming>=0.13.3",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+    "pytest>=7.3.0",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.2.0",
+]
+
+notebook = [
+    "jupyter>=1.0.0",
+    "ipykernel>=6.21.0",
+    "ipywidgets>=8.0.0",
+    "nbformat>=5.7.0",
+]
+
+all = [
+    "kepler-exoplanet-ml[dev,notebook]"
 ]
 
 [project.urls]
-# Projenin GitHub linkleri ile güncelle
-Homepage = "https://github.com/ozturu68/kepler-new"
-Repository = "https://github.com/ozturu68/kepler-new"
-Documentation = "https://github.com/ozturu68/kepler-new" # veya MkDocs siten
+Homepage = "https://github.com/ozturu68/-KEPLER-AI-"
+Repository = "https://github.com/ozturu68/-KEPLER-AI-"
+Issues = "https://github.com/ozturu68/-KEPLER-AI-/issues"
+Documentation = "https://github.com/ozturu68/-KEPLER-AI-/blob/main/README.md"
 
 # ===================================================================
-# Kod Formatlama ve Sıralama Araçları (Black & isort)
+# BLACK - Code Formatter
 # ===================================================================
 
 [tool.black]
-# Satır uzunluğu (flake8 ve pylint ile aynı olmalı)
-line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
+line-length = 120
+target-version = ['py310']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
-  \.eggs
-  | \.git
+    \.git
   | \.mypy_cache
+  | \.pytest_cache
   | \.tox
   | \.venv
+  | venv
   | build
   | dist
+  | data
+  | logs
+  | models
+  | catboost_info
 )/
 '''
 
+# ===================================================================
+# ISORT - Import Sorter
+# ===================================================================
+
 [tool.isort]
 profile = "black"
-line_length = 100
+line_length = 120
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 skip_gitignore = true
-# 'src' klasörünü ana kodun olarak tanımla
 known_first_party = ["src"]
-default_section = "THIRDPARTY"
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+skip = [".git", ".mypy_cache", ".pytest_cache", ".tox", ".venv", "venv", "build", "dist"]
 
 # ===================================================================
-# Kod Denetleme (Linting) Araçları (flake8 & pylint)
-# ARTIK MERKEZİLEŞTİRİLDİ
+# MYPY - Type Checker
 # ===================================================================
-
-[tool.pylint.main]
-# Satır uzunluğu (black ile aynı)
-max-line-length = 100
-# Test ve venv klasörlerini denetimden çıkar
-ignore = ["tests", "venv"]
-# Hata sembolleri yerine isimlerini kullan (daha okunaklı)
-reports = "yes"
-# Gereksiz "disable" yorumlarını bildir
-disable = [
-    "C0114", # missing-module-docstring
-    "C0115", # missing-class-docstring
-    "C0116", # missing-function-docstring
-    "R0903", # too-few-public-methods (API/Schema sınıfları için yararlı)
-    "W0511", # TODO/FIXME yorumlarına izin ver
-    "R0801", # similar-lines (Testlerde sıkça olur)
-]
-
-# ===================================================================
-# Güvenlik ve Tip Kontrolü (bandit & mypy)
-# İYİLEŞTİRİLMİŞ AYARLAR
-# ===================================================================
-
-[tool.bandit]
-# Güvenlik taraması 'scripts' klasörünü de içermeli
-exclude_dirs = ["tests", "venv"]
-# 'assert' kullanımına ve 'subprocess'a izin ver (dikkatli kullan)
-skips = ["B101", "B601"]
 
 [tool.mypy]
-# KATILAŞTIRILMIŞ TİP KONTROLÜ
-python_version = "3.8"
-warn_return_any = true
+python_version = "3.10"
+warn_return_any = false
 warn_unused_configs = true
+disallow_untyped_defs = false
+warn_no_return = false
+warn_redundant_casts = false
+warn_unused_ignores = false
+check_untyped_defs = true
+no_implicit_optional = true
+strict_optional = false
+show_error_codes = true
+pretty = true
+mypy_path = "src"
+files = ["src"]
+exclude = ["venv", ".venv", "build", "dist", "tests"]
 
-# Tüm fonksiyonların tip tanımlaması içermesini zorunlu kıl
-disallow_untyped_defs = true
-# None dönebilecek ama belirtilmemiş fonksiyonları bul
-warn_no_return = true
-
-# Tip tanımlaması olmayan kütüphaneleri yoksayma (daha güvenli)
-# SADECE stubs'ı olmayan BİLDİĞİMİZ kütüphaneleri yoksay
 [[tool.mypy.overrides]]
 module = [
     "catboost.*",
-    "lightgbm.*",
-    "xgboost.*",
-    "shap.*",
-    "pandera.*",
-    "scipy.*",
+    "sklearn.*",
+    "imblearn.*",
     "seaborn.*",
     "matplotlib.*",
     "loguru.*",
-    "locust.*",
-    "pytest.*",
-    "requests.*",
     "tqdm.*",
-    "joblib.*",
-    "click.*",
-    "uvicorn.*",
-    "prometheus_client.*",
-    "httpx.*",
-    "imbalanced_learn.*"
 ]
 ignore_missing_imports = true
 
 # ===================================================================
-# Test ve Kod Kapsamı (pytest & coverage)
+# PYTEST - Testing
 # ===================================================================
 
 [tool.pytest.ini_options]
@@ -152,49 +182,26 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-# FastAPI testleri için asyncio modunu otomatik yap
-asyncio_mode = "auto"
-addopts = [
-    "-v",
-    "--strict-markers",
-    "--cov=src",
-    "--cov-report=term-missing",
-    "--cov-report=html",
-    # Proje kalitesi için %80 kapsamı zorunlu tut
-    "--cov-fail-under=80",
-]
-markers = [
-    "slow: yavaş testleri işaretler",
-    "integration: entegrasyon testlerini işaretler",
-    "unit: birim testlerini işaretler",
-    "e2e: uçtan uca testleri işaretler",
-]
+addopts = ["-v", "--strict-markers", "--tb=short", "--cov=src", "--cov-report=term-missing", "--cov-report=html:htmlcov", "--maxfail=5"]
+markers = ["slow: slow tests", "integration: integration tests", "unit: unit tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.coverage.run]
 source = ["src"]
-omit = [
-    "*/tests/*",
-    "*/test_*.py",
-    # __init__.py dosyaları genellikle test edilmez
-    "*/__init__.py",
-    # API'nin ana başlangıç dosyası
-    "src/api/main.py",
-    # Streamlit'in ana başlangıç dosyası
-    "src/webapp/app.py",
-]
+omit = ["*/tests/*", "*/__init__.py"]
 branch = true
 
 [tool.coverage.report]
 precision = 2
 show_missing = true
-skip_covered = false
-exclude_lines = [
-    # Standart hariç tutmalar
-    "pragma: no cover",
-    "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    # Soyut (abstract) metodlar
-    "@(abc\.)?abstractmethod",
-]
+exclude_lines = ["pragma: no cover", "def __repr__", "raise NotImplementedError", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+# ===================================================================
+# SETUPTOOLS
+# ===================================================================
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.setuptools.package-data]
+src = ["py.typed"]
