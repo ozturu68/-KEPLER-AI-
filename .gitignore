@@ -154,3 +154,52 @@ __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+logs/*.log
+*.log
+
+# Models (large files)
+models/archive/
+*.pkl.bak
+*.pkl.old
+
+# Data cache
+data/cache/
+data/tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
