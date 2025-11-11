@@ -1,0 +1,82 @@
+================================================================================
+v2 FINAL MODEL - COMPREHENSIVE ANALYSIS REPORT
+================================================================================
+Analysis Date: 2025-11-12 00:18:10 UTC
+Author: sulegogh
+Model: /home/ozturu68/Projeler/kepler-new/models/v2_final/catboost_v2_final
+Test Samples: 1435
+Features: 50
+
+================================================================================
+CLASSIFICATION REPORT
+================================================================================
+                precision    recall  f1-score   support
+
+     CANDIDATE     0.6071    0.8586    0.7113       297
+     CONFIRMED     0.9435    0.8519    0.8954       412
+FALSE POSITIVE     0.9627    0.8526    0.9043       726
+
+      accuracy                         0.8537      1435
+     macro avg     0.8378    0.8544    0.8370      1435
+  weighted avg     0.8836    0.8537    0.8618      1435
+
+
+Overall Accuracy: 85.37%
+Balanced Accuracy: 85.44%
+
+================================================================================
+CONFUSION MATRIX
+================================================================================
+                     Pred CANDIDATE  Pred CONFIRMED  Pred FALSE POSITIVE
+True CANDIDATE                  255              20                   22
+True CONFIRMED                   59             351                    2
+True FALSE POSITIVE             106               1                  619
+
+================================================================================
+ERROR ANALYSIS
+================================================================================
+Total Samples: 1435
+Correct Predictions: 1225
+Total Errors: 210
+Overall Accuracy: 85.37%
+Error Rate: 14.63%
+
+Per-Class Metrics:
+  CANDIDATE           : 255/297 correct (85.86% accuracy, 42 errors)
+  CONFIRMED           : 351/412 correct (85.19% accuracy, 61 errors)
+  FALSE POSITIVE      : 619/726 correct (85.26% accuracy, 107 errors)
+
+================================================================================
+TOP 20 FEATURE IMPORTANCES
+================================================================================
+          feature  importance
+        koi_score   26.420705
+  koi_max_mult_ev    5.647271
+    koi_model_snr    4.450911
+        koi_count    4.020862
+   koi_dicco_msky    3.986417
+         koi_prad    2.389388
+   koi_dikco_msky    2.286035
+ koi_fwm_stat_sig    2.280823
+       koi_impact    2.273210
+koi_duration_err1    2.066583
+  koi_fwm_sra_err    1.980658
+ orbital_velocity    1.925485
+     koi_duration    1.896109
+  snr_per_transit    1.596801
+    koi_srad_err1    1.596515
+   koi_depth_err1    1.430569
+ koi_fwm_prao_err    1.419080
+    koi_prad_err1    1.359101
+    koi_srho_err1    1.323135
+ koi_time0bk_err1    1.306448
+
+================================================================================
+GENERATED FILES
+================================================================================
+1. /home/ozturu68/Projeler/kepler-new/logs/analysis_v2/confusion_matrix.png
+2. /home/ozturu68/Projeler/kepler-new/logs/analysis_v2/feature_importance_top20.png
+3. /home/ozturu68/Projeler/kepler-new/logs/analysis_v2/feature_importance_full.csv
+4. /home/ozturu68/Projeler/kepler-new/logs/analysis_v2/class_distribution.png
+5. /home/ozturu68/Projeler/kepler-new/logs/analysis_v2/error_analysis.png
+6. /home/ozturu68/Projeler/kepler-new/logs/analysis_v2/analysis_report.txt

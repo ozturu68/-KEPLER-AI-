@@ -1,0 +1,160 @@
+{
+  "created_at": "2025-11-11 23:53:15 UTC",
+  "user": "sulegogh",
+  "baseline_recall": 0.5993265993265994,
+  "best_strategy": "4. Manual Aggressive",
+  "best_recall": 0.8754208754208754,
+  "improvement_pct": 27.609427609427605,
+  "strategies": [
+    {
+      "name": "1. Baseline (No Weights)",
+      "class_weights": "None",
+      "test_accuracy": 0.8668989547038327,
+      "test_f1": 0.862115604599779,
+      "candidate_recall": 0.5993265993265994,
+      "confirmed_recall": 0.9271844660194175,
+      "false_positive_recall": 0.9421487603305785,
+      "training_time": 8.78853440284729,
+      "class_wise_metrics": {
+        "CANDIDATE": {
+          "precision": 0.7325102880658436,
+          "recall": 0.5993265993265994,
+          "f1_score": 0.6592592592592592,
+          "support": 297
+        },
+        "CONFIRMED": {
+          "precision": 0.9116945107398569,
+          "recall": 0.9271844660194175,
+          "f1_score": 0.9193742478941035,
+          "support": 412
+        },
+        "FALSE POSITIVE": {
+          "precision": 0.8848641655886158,
+          "recall": 0.9421487603305785,
+          "f1_score": 0.9126084056037358,
+          "support": 726
+        }
+      }
+    },
+    {
+      "name": "2. Balanced (Auto)",
+      "class_weights": "Balanced",
+      "test_accuracy": 0.8689895470383275,
+      "test_f1": 0.8713376919775638,
+      "candidate_recall": 0.7474747474747475,
+      "confirmed_recall": 0.9150485436893204,
+      "false_positive_recall": 0.8925619834710744,
+      "training_time": 8.705543041229248,
+      "class_wise_metrics": {
+        "CANDIDATE": {
+          "precision": 0.6727272727272727,
+          "recall": 0.7474747474747475,
+          "f1_score": 0.7081339712918661,
+          "support": 297
+        },
+        "CONFIRMED": {
+          "precision": 0.9195121951219513,
+          "recall": 0.9150485436893204,
+          "f1_score": 0.9172749391727494,
+          "support": 412
+        },
+        "FALSE POSITIVE": {
+          "precision": 0.9323741007194245,
+          "recall": 0.8925619834710744,
+          "f1_score": 0.912033779028853,
+          "support": 726
+        }
+      }
+    },
+    {
+      "name": "3. Manual Conservative",
+      "class_weights": "[2.5, 1.0, 0.7]",
+      "test_accuracy": 0.8529616724738676,
+      "test_f1": 0.8596293445071161,
+      "candidate_recall": 0.8080808080808081,
+      "confirmed_recall": 0.8519417475728155,
+      "false_positive_recall": 0.871900826446281,
+      "training_time": 7.268247127532959,
+      "class_wise_metrics": {
+        "CANDIDATE": {
+          "precision": 0.6138107416879796,
+          "recall": 0.8080808080808081,
+          "f1_score": 0.6976744186046512,
+          "support": 297
+        },
+        "CONFIRMED": {
+          "precision": 0.9435483870967742,
+          "recall": 0.8519417475728155,
+          "f1_score": 0.8954081632653061,
+          "support": 412
+        },
+        "FALSE POSITIVE": {
+          "precision": 0.9419642857142857,
+          "recall": 0.871900826446281,
+          "f1_score": 0.9055793991416309,
+          "support": 726
+        }
+      }
+    },
+    {
+      "name": "4. Manual Aggressive",
+      "class_weights": "[3.0, 1.0, 0.5]",
+      "test_accuracy": 0.8494773519163763,
+      "test_f1": 0.858595099868568,
+      "candidate_recall": 0.8754208754208754,
+      "confirmed_recall": 0.8446601941747572,
+      "false_positive_recall": 0.8415977961432507,
+      "training_time": 6.4879677295684814,
+      "class_wise_metrics": {
+        "CANDIDATE": {
+          "precision": 0.5963302752293578,
+          "recall": 0.8754208754208754,
+          "f1_score": 0.7094133697135061,
+          "support": 297
+        },
+        "CONFIRMED": {
+          "precision": 0.9508196721311475,
+          "recall": 0.8446601941747572,
+          "f1_score": 0.8946015424164524,
+          "support": 412
+        },
+        "FALSE POSITIVE": {
+          "precision": 0.9652448657187994,
+          "recall": 0.8415977961432507,
+          "f1_score": 0.8991905813097866,
+          "support": 726
+        }
+      }
+    },
+    {
+      "name": "5. Inverse Frequency",
+      "class_weights": "[1.6110709987966305, 1.1609434616718697, 0.658793425843913]",
+      "test_accuracy": 0.864808362369338,
+      "test_f1": 0.8677092319107987,
+      "candidate_recall": 0.7441077441077442,
+      "confirmed_recall": 0.9029126213592233,
+      "false_positive_recall": 0.8925619834710744,
+      "training_time": 7.597760200500488,
+      "class_wise_metrics": {
+        "CANDIDATE": {
+          "precision": 0.6577380952380952,
+          "recall": 0.7441077441077442,
+          "f1_score": 0.69826224328594,
+          "support": 297
+        },
+        "CONFIRMED": {
+          "precision": 0.9230769230769231,
+          "recall": 0.9029126213592233,
+          "f1_score": 0.912883435582822,
+          "support": 412
+        },
+        "FALSE POSITIVE": {
+          "precision": 0.9310344827586207,
+          "recall": 0.8925619834710744,
+          "f1_score": 0.9113924050632911,
+          "support": 726
+        }
+      }
+    }
+  ]
+}

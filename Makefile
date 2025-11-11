@@ -40,7 +40,7 @@ NOTEBOOKS_DIR := notebooks
 # Docker
 DOCKER_IMAGE := exoplanet-ml
 DOCKER_TAG := latest
-DOCKER_REGISTRY := 
+DOCKER_REGISTRY :=
 
 # Colors
 RED := \033[0;31m
