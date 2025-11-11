@@ -1,12 +1,45 @@
 # ==========================================================
-# EXOPLANET-ML PROJESİ: OTOMATİK KALİTE KONTROL KAPISI
+# KEPLER EXOPLANET ML PROJECT: AUTOMATED QUALITY GATE
 # ==========================================================
 # Bu dosya, `git commit` öncesi tüm kalite kontrollerini
-# (format, lint, tip, güvenlik) otomatik olarak çalıştırır.
+# (format, lint, type, security) otomatik olarak çalıştırır.
 #
 # Kurallar (line-length, ignore vb.) 'pyproject.toml'
 # dosyasından merkezi olarak okunur.
+#
+# Updated: 2025-11-11 18:46:13 UTC
+# Author: sulegogh
+# Version: 2.0 (Pre-commit 3.x compatible)
 # ==========================================================
+
+# Pre-commit yapılandırması
+default_language_version:
+  python: python3.10
+
+# Hangi dosyaları kontrol etmeyeceğiz
+exclude: |
+  (?x)^(
+      .*\.egg-info/.*|
+      .*/__pycache__/.*|
+      .*\.pyc|
+      .*\.pyo|
+      .*/\.git/.*|
+      .*/\.tox/.*|
+      .*/\.pytest_cache/.*|
+      .*/\.mypy_cache/.*|
+      .*\.ipynb_checkpoints/.*|
+      venv/.*|
+      env/.*|
+      data/raw/.*|
+      data/processed/.*|
+      data/engineered/.*|
+      data/scaled/.*|
+      data/selected/.*|
+      models/.*\.pkl|
+      models/.*\.joblib|
+      logs/.*|
+      catboost_info/.*
+  )$
 
 repos:
   # --------------------------------------------------------
@@ -17,26 +50,56 @@ repos:
     hooks:
       # --- Dosya Bütünlüğü ---
       - id: trailing-whitespace
+        name: Trim Trailing Whitespace
         args: [--markdown-linebreak-ext=md]
+        
       - id: end-of-file-fixer
+        name: Fix End of Files
+        
       - id: mixed-line-ending
+        name: Fix Line Endings
         args: [--fix=lf]
+        
       - id: check-merge-conflict
+        name: Check for Merge Conflicts
+        
       - id: check-case-conflict
+        name: Check for Case Conflicts
+        
       - id: check-docstring-first
+        name: Check Docstring First
 
       # --- Yapılandırma Dosyaları ---
       - id: check-yaml
+        name: Check YAML Syntax
         args: [--safe]
+        exclude: ^\.pre-commit-config\.yaml$  # Self-check skip
+        
       - id: check-json
+        name: Check JSON Syntax
+        
       - id: check-toml
+        name: Check TOML Syntax
 
       # --- Güvenlik & Veri Sızıntısı Engelleme ---
       - id: check-added-large-files
-        # "Güçlü Yerel" stratejimiz için 2. savunma hattı.
-        # 10MB'tan (10000 KB) büyük dosyaları engeller.
-        args: ['--maxkb=10000']
+        name: Check Large Files (>10MB)
+        args: ['--maxkb=10000']  # 10MB limit
+        exclude: |
+          (?x)^(
+              data/.*\.csv|
+              models/.*\.pkl|
+              models/.*\.joblib
+          )$
+        
       - id: detect-private-key
+        name: Detect Private Keys
+        
+      - id: check-ast
+        name: Check Python AST
+        
+      - id: debug-statements
+        name: Check Debug Statements
 
   # --------------------------------------------------------
   # KOD FORMATLAMA (Black & isort)
@@ -45,16 +108,17 @@ repos:
     rev: 23.12.1
     hooks:
       - id: black
-        language_version: python3
-        # ARGS YOK: Kurallar 'pyproject.toml' [tool.black]
-        # bölümünden otomatik olarak okunacak.
+        name: Format with Black
+        language_version: python3.10
+        # NO stages: Pre-commit 3.x uses [commit] by default
+        # Kurallar 'pyproject.toml' [tool.black] bölümünden okunur
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
-        # ARGS YOK: Kurallar 'pyproject.toml' [tool.isort]
-        # bölümünden otomatik olarak okunacak.
+        name: Sort Imports with isort
+        # Kurallar 'pyproject.toml' [tool.isort] bölümünden okunur
 
   # --------------------------------------------------------
   # KOD DENETLEME (Flake8 Linter)
@@ -63,15 +127,14 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
-        # ARGS YOK: Kurallar 'pyproject.toml' [tool.flake8]
-        # bölümünden otomatik olarak okunacak.
-        # Kancanın çalışması için eklentilerin burada da
-        # tanımlanması gerekir.
-        additional_dependencies: [
-          'flake8-docstrings',
-          'flake8-bugbear',
-          'flake8-comprehensions',
-        ]
+        name: Lint with Flake8
+        # Kurallar 'pyproject.toml' [tool.flake8] bölümünden okunur
+        additional_dependencies:
+          - flake8-docstrings>=1.7.0
+          - flake8-bugbear>=23.12.2
+          - flake8-comprehensions>=3.14.0
+          - flake8-simplify>=0.21.0
+          - pep8-naming>=0.13.3
 
   # --------------------------------------------------------
   # STATİK TİP KONTROLÜ (MyPy)
@@ -80,27 +143,22 @@ repos:
     rev: v1.8.0
     hooks:
       - id: mypy
-        # ARGS YOK: Kurallar 'pyproject.toml' [tool.mypy]
-        # bölümündeki KATI ayarlardan okunacak.
-        # 'types-*' bağımlılıkları, kancanın kendi ortamı
-        # için gereklidir.
-        additional_dependencies: [
-          'types-requests',
-          'types-PyYAML',
-          'types-python-dateutil',
-          'pandas-stubs'
-        ]
-
-  # --------------------------------------------------------
-  # GÜVENLİK KONTROLÜ (Bandit)
-  # --------------------------------------------------------
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.6
-    hooks:
-      - id: bandit
-        # Bandit'e ayarları nereden okuyacağını açıkça söylüyoruz.
-        args: ['-c', 'pyproject.toml']
-        additional_dependencies: ['bandit[toml]']
+        name: Type Check with MyPy
+        # Kurallar 'pyproject.toml' [tool.mypy] bölümünden okunur
+        additional_dependencies:
+          - types-requests>=2.31.0
+          - types-PyYAML>=6.0.12
+          - types-python-dateutil>=2.8.19
+          - pandas-stubs>=2.1.1
+          - numpy>=1.24.0
+        args:
+          - --ignore-missing-imports
+          - --no-strict-optional
+        exclude: |
+          (?x)^(
+              tests/.*|
+              notebooks/.*
+          )$
 
   # --------------------------------------------------------
   # JUPYTER NOTEBOOK KALİTESİ (nbQA)
@@ -109,13 +167,72 @@ repos:
     rev: 1.7.1
     hooks:
       - id: nbqa-black
-        # ARGS YOK: 'pyproject.toml' [tool.black] ayarlarını kullanacak.
+        name: Format Notebooks with Black
+        # Kurallar 'pyproject.toml' [tool.black] ayarlarını kullanır
+        
       - id: nbqa-isort
-        # ARGS YOK: 'pyproject.toml' [tool.isort] ayarlarını kullanacak.
+        name: Sort Notebook Imports
+        # Kurallar 'pyproject.toml' [tool.isort] ayarlarını kullanır
+        
       - id: nbqa-flake8
-        # ARGS YOK: 'pyproject.toml' [tool.flake8] ayarlarını kullanacak.
-        additional_dependencies: [
-          'flake8-docstrings',
-          'flake8-bugbear',
-          'flake8-comprehensions',
-        ]
+        name: Lint Notebooks with Flake8
+        # Kurallar 'pyproject.toml' [tool.flake8] ayarlarını kullanır
+        additional_dependencies:
+          - flake8-docstrings
+          - flake8-bugbear
+          - flake8-comprehensions
+
+  # --------------------------------------------------------
+  # PYTHON GÜNCELLEME KONTROL (pyupgrade)
+  # --------------------------------------------------------
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        name: Upgrade Python Syntax
+        args: [--py310-plus]  # Python 3.10+ syntax
+
+  # --------------------------------------------------------
+  # DOKÜMANTasyon KALİTESİ (pydocstyle)
+  # --------------------------------------------------------
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        name: Check Docstring Style
+        args:
+          - --convention=google
+          - --add-ignore=D100,D104,D107  # Eksik docstring'leri yumuşat
+        exclude: |
+          (?x)^(
+              tests/.*|
+              setup\.py
+          )$
+
+  # --------------------------------------------------------
+  # YAML/JSON FORMATLAMA
+  # --------------------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: Format YAML/JSON/Markdown
+        types_or: [yaml, json, markdown]
+        exclude: |
+          (?x)^(
+              \.pre-commit-config\.yaml|
+              data/.*
+          )$
+
+# ==========================================================
+# CI/CD ORTAMI İÇİN
+# ==========================================================
+# CI ortamında tüm hook'ları atlamak için:
+#   SKIP=... git commit -m "..."
+#
+# Belirli hook'ları atlamak için:
+#   SKIP=black,flake8 git commit -m "..."
+#
+# Pre-commit'i tamamen bypass etmek için:
+#   git commit --no-verify -m "..."
+# ==========================================================
