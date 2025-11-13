@@ -1,440 +1,330 @@
-# 🚀 CatBoost v2 Final Model - Production Ready
+# 🪐 Kepler Exoplanet ML Project
 
-**NASA Kepler Exoplanet Classification Model**
+NASA Kepler uzay teleskobu verilerini kullanarak gezegen adaylarını (exoplanet) sınıflandıran machine learning projesi.
 
-[![Model Status](https://img.shields.io/badge/Status-Production%20Ready-success)]()
-[![Accuracy](https://img.shields.io/badge/Accuracy-84.95%25-blue)]()
-[![CANDIDATE Recall](https://img.shields.io/badge/CANDIDATE%20Recall-87.54%25-green)]()
-[![Model Size](https://img.shields.io/badge/Model%20Size-0.86%20MB-orange)]()
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/Tests-359%20passed-success.svg)](tests/)
+[![Coverage](https://img.shields.io/badge/Coverage-66.17%25-yellow.svg)](htmlcov/)
+[![Code Style](https://img.shields.io/badge/Code%20Style-Black-000000.svg)](https://github.com/psf/black)
 
----
+## 📋 İçindekiler
 
-## 📊 Performance Summary
+- [Özellikler](#özellikler)
+- [Kurulum](#kurulum)
+- [Kullanım](#kullanım)
+- [Proje Yapısı](#proje-yapısı)
+- [Test](#test)
+- [Dokümantasyon](#dokümantasyon)
+- [Katkıda Bulunma](#katkıda-bulunma)
 
-### 🎯 Key Metrics (Test Set: 1,435 samples)
+## ✨ Özellikler
 
-| Metric                  | Value      | Target | Status                |
-| ----------------------- | ---------- | ------ | --------------------- |
-| **Overall Accuracy**    | **84.95%** | ≥80%   | ✅ **PASS**           |
-| **F1 Score (Weighted)** | **85.86%** | ≥80%   | ✅ **PASS**           |
-| **CANDIDATE Recall**    | **87.54%** | ≥70%   | ✅ **PASS (+27.61%)** |
-| **False Negative Rate** | **12.46%** | <20%   | ✅ **PASS**           |
-| **ROC AUC**             | **~96.8%** | ≥90%   | ✅ **PASS**           |
+### ✅ Tamamlanan Modüller
 
-### 📈 Class-wise Performance
+- **🔧 Veri İşleme Pipeline**
 
-| Class              | Precision | Recall        | F1-Score | Support | Errors                 |
-| ------------------ | --------- | ------------- | -------- | ------- | ---------------------- |
-| **CANDIDATE**      | 73.25%    | **87.54%** ✅ | 79.69%   | 297     | **37 missed (12.46%)** |
-| **CONFIRMED**      | 91.17%    | 84.47%        | 87.69%   | 412     | 64 missed (15.53%)     |
-| **FALSE POSITIVE** | 88.49%    | 84.16%        | 86.27%   | 726     | 115 missed (15.84%)    |
-| **Weighted Avg**   | 86.17%    | 84.95%        | 85.21%   | 1,435   | **216 total errors**   |
+  - Veri temizleme (97% test coverage)
+  - Eksik değer yönetimi
+  - Outlier tespiti ve işleme
+  - Veri validasyonu
 
----
+- **🎨 Feature Engineering**
 
-## 🏆 Why This Model Was Selected
+  - Planetary feature oluşturma
+  - Interaction features
+  - Polynomial features
+  - Feature scaling (Standard, MinMax, Robust)
+  - Feature selection (84-93% coverage)
 
-### Scientific Justification
+- **📊 Model Değerlendirme**
 
-**Tested 3 approaches:**
+  - Comprehensive metrics (97% coverage)
+  - Confusion matrix
+  - Classification reports
+  - ROC-AUC scoring
+  - Cross-validation support
 
-| Version | Strategy                          | CAN Recall | Accuracy   | Decision          |
-| ------- | --------------------------------- | ---------- | ---------- | ----------------- |
-| v1      | Baseline (no adjustments)         | 59.93%     | 86.69%     | ❌ Poor recall    |
-| **v2**  | **Class Weights [3.0, 1.0, 0.5]** | **87.54%** | **84.95%** | ✅ **SELECTED**   |
-| v3      | SMOTE + Class Weights             | 87.88%     | 83.69%     | ❌ Overengineered |
+- **🔗 Integration Tests**
+  - 19 end-to-end pipeline testi
+  - 100% test coverage
+  - Edge case scenarios
 
-**Why v2 over v3?**
+### 🚧 Geliştirme Aşamasında
 
-- ✅ Only **1 CANDIDATE difference** (37 vs 36 missed = 0.34% = statistical noise)
-- ✅ **1.26% better accuracy** (84.95% vs 83.69%)
-- ✅ **18 fewer total errors** (216 vs 234)
-- ✅ **Real data only** (no synthetic samples)
-- ✅ **74.9% faster training** (5.87s vs 10.26s)
-- ✅ **Better weighted error** (677 vs 704)
+- **🤖 Model Training Pipeline**
 
-**Mathematical Analysis:**
+  - Base model class (refactor gerekli)
+  - CatBoost implementation (test coverage düşük)
+  - Hyperparameter tuning
+  - Model registry & versioning
 
-```
-Weighted Error (CANDIDATE=10, CONFIRMED=3, FP=1):
-v2: (37×10) + (64×3) + (115×1) = 677  ✅ Best
-v3: (36×10) + (73×3) + (125×1) = 704
+- **🌐 API & Serving** (Planlanan)
 
-Trade-off: 1 CANDIDATE gain vs 18 total errors = Poor ratio
-```
+  - FastAPI REST endpoints
+  - Prediction serving
+  - Model explainability (SHAP)
+  - Health checks
 
----
+- **💻 CLI & Web Interface** (Planlanan)
+  - Command-line interface
+  - Streamlit dashboard
+  - Interactive visualizations
 
-## 🔧 Model Architecture
+## 🚀 Kurulum
 
-### Hyperparameters
+### Gereksinimler
 
-```python
-{
-    "model": "CatBoost",
-    "task": "MultiClass",
-    "iterations": 1000,
-    "learning_rate": 0.03,
-    "depth": 6,
-    "l2_leaf_reg": 3,
-    "class_weights": [3.0, 1.0, 0.5],  # Manual Aggressive
-    "loss_function": "MultiClass",
-    "eval_metric": "MultiClass",
-    "random_seed": 42,
-    "early_stopping_rounds": 50,
-    "verbose": False
-}
-```
+- Python 3.10+
+- pip
+- virtualenv (önerilen)
 
-### Class Weighting Strategy
-
-**Manual Aggressive: [3.0, 1.0, 0.5]**
-
-| Class              | Weight   | Rationale                                                 |
-| ------------------ | -------- | --------------------------------------------------------- |
-| **CANDIDATE**      | **3.0x** | Heavily prioritize (most critical - exoplanet discovery!) |
-| **CONFIRMED**      | **1.0x** | Baseline (already well-represented)                       |
-| **FALSE POSITIVE** | **0.5x** | De-prioritize (least critical - can verify later)         |
-
-**Philosophy:** Maximize CANDIDATE detection (minimize false negatives) while maintaining acceptable overall accuracy.
-
----
-
-## 📁 Model Files
-
-```
-models/v2_final/
-├── catboost_v2_final.pkl          # 🎯 Main model file (0.86 MB)
-├── comparison_report.json          # Strategy comparison data
-├── comparison_summary.txt          # Human-readable summary
-└── README.md                       # This documentation
-```
-
----
-
-## 🚀 Usage Guide
-
-### Quick Start
-
-```python
-from src.models import CatBoostModel
-import pandas as pd
-
-# Load model
-model = CatBoostModel.load('models/v2_final/catboost_v2_final.pkl')
-
-# Load test data (must be preprocessed + scaled + engineered + selected)
-X_test = pd.read_csv('data/selected/test_selected.csv')
-X_test = X_test.drop(columns=['koi_disposition'])
-
-# Predict
-predictions = model.predict(X_test)  # Class labels
-probabilities = model.predict_proba(X_test)  # Confidence scores
-
-# Results
-print(f"Predictions: {predictions}")
-print(f"Confidence: {probabilities}")
-```
-
-### Full Pipeline
-
-```python
-# 1. Load raw data
-from src.data import load_raw_data, preprocess_data
-df = load_raw_data('data/raw/cumulative.csv')
-
-# 2. Preprocess
-df_clean = preprocess_data(df)
-
-# 3. Scale features
-from src.features import scale_features
-X_scaled = scale_features(df_clean)
-
-# 4. Engineer features
-from src.features import engineer_features
-X_engineered = engineer_features(X_scaled)
-
-# 5. Select features
-from src.features import select_features
-X_selected = select_features(X_engineered)
-
-# 6. Predict
-predictions = model.predict(X_selected)
-```
-
-### Production Inference
+### Hızlı Başlangıç
 
 ```bash
-# Use production script
-python scripts/predict_v2.py --input data/new_data.csv --output predictions.csv
+# Repository'yi klonla
+git clone https://github.com/sulegogh/kepler-new.git
+cd kepler-new
+
+# Virtual environment oluştur
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+# veya
+venv\Scripts\activate  # Windows
+
+# Bağımlılıkları yükle
+pip install -r requirements.txt
+
+# Pre-commit hook'ları kur
+pre-commit install
+
+# Testleri çalıştır
+pytest tests/ -v
 ```
 
----
+## 📊 Kullanım
 
-## 📊 Training Details
+### Veri İşleme
 
-### Dataset
+```python
+from src.data.cleaners import clean_data
+from src.data.preprocessors import MissingValueHandler
 
-- **Source:** NASA Kepler Exoplanet Search Results
-- **Total Samples:** 9,564
-  - Training: 6,694 (70%)
-  - Validation: 1,435 (15%)
-  - Test: 1,435 (15%)
-- **Features:** 50 selected features (after feature engineering & selection)
-- **Classes:** 3 (CANDIDATE, CONFIRMED, FALSE POSITIVE)
+# Veriyi temizle
+df_cleaned = clean_data(df, handle_outliers=True, method='clip')
 
-### Class Distribution (Original Training Set)
-
-| Class          | Samples | Percentage        |
-| -------------- | ------- | ----------------- |
-| CANDIDATE      | 1,385   | 20.69% (minority) |
-| CONFIRMED      | 1,922   | 28.71%            |
-| FALSE POSITIVE | 3,387   | 50.60% (majority) |
-
-**Imbalance Ratio:** 1 : 1.39 : 2.45
-
----
-
-## 🔬 Validation Against NASA Standards
-
-### NASA Kepler Mission Requirements
-
-| Requirement                    | Standard                | v2 Final   | Status         |
-| ------------------------------ | ----------------------- | ---------- | -------------- |
-| CANDIDATE Recall (Sensitivity) | ≥ 75%                   | **87.54%** | ✅ **+12.54%** |
-| False Negative Rate            | < 20%                   | **12.46%** | ✅ **-7.54%**  |
-| Overall Accuracy               | ≥ 80%                   | **84.95%** | ✅ **+4.95%**  |
-| Model Stability                | Consistent across folds | Validated  | ✅             |
-
-**Conclusion:** Model exceeds all NASA Kepler mission standards. ✅
-
----
-
-## 📈 Error Analysis
-
-### Confusion Matrix (Test Set)
-
-```
-                   Predicted
-                   CAN    CON    FP     Total
-Actual  CANDIDATE  260    ?      37     297
-        CONFIRMED  ?      348    ?      412
-        FALSE POS  ?      ?      611    726
-        ─────────────────────────────────────
-        Total      ?      ?      ?      1,435
+# Eksik değerleri işle
+handler = MissingValueHandler(numerical_strategy='median')
+df_filled = handler.fit_transform(df_cleaned)
 ```
 
-### Error Breakdown
+### Feature Engineering
 
-**CANDIDATE Class (297 samples):**
+```python
+from src.features.engineering import ExoplanetFeatureEngineer
+from src.features.scalers import FeatureScaler
+from src.features.selection import FeatureSelector
 
-- ✅ **True Positives:** 260 (87.54%)
-- ❌ **False Negatives:** 37 (12.46%)
-  - Missed CANDIDATES → Likely low SNR or edge cases
-  - **Impact:** 37 potential exoplanets not detected (but within acceptable range)
+# Yeni feature'lar oluştur
+engineer = ExoplanetFeatureEngineer()
+df_engineered = engineer.fit_transform(df)
 
-**Most Common Errors:**
+# Scale features
+scaler = FeatureScaler(method='standard')
+df_scaled = scaler.fit_transform(df_engineered)
 
-1. CANDIDATE → FALSE POSITIVE (~30-35 cases)
-   - **Issue:** Model too conservative on borderline candidates
-2. FALSE POSITIVE → CANDIDATE (~5-10 cases)
-   - **Issue:** Some false alarms misclassified as candidates
-3. CONFIRMED → FALSE POSITIVE (~60 cases)
-   - **Issue:** Some confirmed exoplanets misclassified
-
----
-
-## 🎯 Feature Importance (Top 10)
-
-| Rank   | Feature               | Importance | Type              |
-| ------ | --------------------- | ---------- | ----------------- |
-| 1      | `koi_score`           | 29.59%     | NASA score        |
-| 2      | `koi_max_mult_ev`     | 4.81%      | Multi-event score |
-| 3      | `koi_count`           | 3.65%      | Transit count     |
-| 4      | `koi_model_snr`       | 2.34%      | Signal-to-noise   |
-| 5      | `koi_period`          | 2.12%      | Orbital period    |
-| 6      | `koi_depth`           | 1.98%      | Transit depth     |
-| 7      | `koi_duration`        | 1.87%      | Transit duration  |
-| 8      | `koi_prad`            | 1.76%      | Planet radius     |
-| 9      | `koi_teq`             | 1.65%      | Equilibrium temp  |
-| 10     | `koi_steff`           | 1.54%      | Stellar temp      |
-| **11** | **`snr_per_transit`** | **1.80%**  | **Engineered ✨** |
-
-**Top 10 Contribution:** 56.28%
-
----
-
-## ⚙️ Model Metadata
-
-### Training Information
-
-- **Training Date:** 2025-11-11 19:24:15 UTC
-- **Training Time:** 5.87 seconds
-- **Best Iteration:** 970 (out of 1000)
-- **Hardware:** CPU (12 threads, Pop!\_OS)
-- **Framework:** CatBoost 1.2+
-- **Python Version:** 3.10+
-
-### Model Artifacts
-
-- **Model Format:** CatBoost binary (`.pkl`)
-- **Model Size:** 0.86 MB (production-ready)
-- **Compression:** None
-- **Checksum:** TBD (to be added)
-
----
-
-## 🛠️ Maintenance & Monitoring
-
-### Recommended Monitoring
-
-1. **CANDIDATE Recall:** Track monthly (should stay ≥85%)
-2. **False Negative Rate:** Alert if >15%
-3. **Overall Accuracy:** Monitor weekly (should stay ≥83%)
-4. **Prediction Distribution:** Check for drift
-
-### Retraining Triggers
-
-🔴 **Immediate Retraining Required:**
-
-- CANDIDATE recall drops below 80%
-- False Negative Rate exceeds 20%
-- New NASA data available (significant update)
-
-🟡 **Retraining Recommended:**
-
-- Accuracy drops below 83%
-- 6 months since last training
-- Feature drift detected
-
-### Version Control
-
-```
-v1.0 (Baseline)      → 59.93% recall [2025-11-11]
-v2.0 (Class Weights) → 87.54% recall [2025-11-11] ← CURRENT ✅
-v3.0 (SMOTE)         → 87.88% recall [2025-11-11] (not deployed)
+# Select best features
+selector = FeatureSelector()
+selected_features, info = selector.select_features(
+    df_scaled,
+    target_col='koi_disposition',
+    n_features=50
+)
 ```
 
+### Model Değerlendirme
+
+```python
+from src.evaluation.metrics import evaluate_model, compare_metrics
+
+# Modeli değerlendir
+metrics = evaluate_model(y_true, y_pred, y_proba=y_proba, dataset_name='Test')
+
+# Metrikleri karşılaştır
+compare_metrics(train_metrics, val_metrics, test_metrics)
+```
+
+## 📁 Proje Yapısı
+
+```
+kepler-new/
+├── src/
+│   ├── core/              # Temel sabitler ve yardımcılar
+│   ├── data/              # Veri işleme modülleri
+│   ├── features/          # Feature engineering
+│   ├── models/            # Model implementasyonları
+│   ├── evaluation/        # Değerlendirme metrikleri
+│   ├── training/          # Eğitim pipeline (geliştiriliyor)
+│   ├── api/               # REST API (planlanan)
+│   ├── cli/               # CLI interface (planlanan)
+│   └── webapp/            # Web dashboard (planlanan)
+│
+├── tests/
+│   ├── test_core/         # 72 tests
+│   ├── test_data/         # 78 tests
+│   ├── test_features/     # 101 tests
+│   ├── test_evaluation/   # 33 tests
+│   ├── test_models/       # 56 tests
+│   └── test_integrations/ # 19 tests
+│
+├── data/
+│   ├── raw/              # Ham veri
+│   └── processed/        # İşlenmiş veri
+│
+├── models/               # Eğitilmiş modeller
+├── notebooks/            # Jupyter notebooks
+├── docs/                 # Dokümantasyon
+├── pytest.ini           # Pytest konfigürasyonu
+├── .pre-commit-config.yaml
+└── requirements.txt
+```
+
+## 🧪 Test
+
+### Tüm Testleri Çalıştır
+
+```bash
+# Verbose mode
+pytest tests/ -v
+
+# Coverage report ile
+pytest tests/ --cov=src --cov-report=html
+
+# Hızlı özet
+pytest tests/ -q
+
+# Sadece belirli modül
+pytest tests/test_features/ -v
+```
+
+### Test İstatistikleri
+
+```
+Total Tests:     359
+Passed:          359 (100%)
+Failed:          0
+Coverage:        66.17%
+Execution Time:  ~10 seconds
+```
+
+### Test Kategorileri
+
+- **Unit Tests:** 340 tests (isolated component testing)
+- **Integration Tests:** 19 tests (end-to-end pipeline testing)
+- **Edge Cases:** Comprehensive edge case coverage
+
+## 📚 Dokümantasyon
+
+Detaylı dokümantasyon için:
+
+- [API Dokümantasyonu](docs/API.md)
+- [Geliştirici Kılavuzu](docs/DEVELOPMENT.md)
+- [Veri Pipeline](docs/DATA_PIPELINE.md)
+- [Feature Engineering](docs/FEATURES.md)
+- [Model Training](docs/TRAINING.md) (yakında)
+
+## 🎯 Proje Durumu
+
+### ✅ Tamamlandı (Phase 1-7)
+
+- [x] Core utilities (100% coverage)
+- [x] Label encoding/decoding (97% coverage)
+- [x] Data cleaning (97% coverage)
+- [x] Data preprocessing (81% coverage)
+- [x] Feature engineering (84% coverage)
+- [x] Feature scaling (91% coverage)
+- [x] Feature selection (93% coverage)
+- [x] Evaluation metrics (97% coverage)
+- [x] Integration tests (100% coverage)
+- [x] Model loading infrastructure (91% coverage)
+
+### 🚧 Geliştiriliyor (Phase 8)
+
+- [ ] Model base class refactoring (12% → 80% target)
+- [ ] CatBoost model tests (9% → 70% target)
+- [ ] Model registry & versioning
+
+### 📋 Planlanan (Phase 9-12)
+
+- [ ] Training pipeline (trainer.py)
+- [ ] Hyperparameter tuning (Optuna)
+- [ ] REST API (FastAPI)
+- [ ] CLI interface
+- [ ] Web dashboard (Streamlit)
+- [ ] SHAP explainability
+- [ ] CI/CD pipeline
+
+## 🤝 Katkıda Bulunma
+
+1. Fork edin
+2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Branch'inizi push edin (`git push origin feature/AmazingFeature`)
+5. Pull Request açın
+
+### Commit Mesaj Formatı
+
+```
+feat: Yeni özellik
+fix: Bug düzeltme
+docs: Dokümantasyon
+test: Test ekleme/düzeltme
+refactor: Kod refactoring
+chore: Genel bakım
+```
+
+## 📊 Performans
+
+- **Test Execution:** <10 seconds (359 tests)
+- **Code Quality:** Black + isort + flake8 compliant
+- **Pre-commit Hooks:** All passing
+- **Coverage:** 66.17% (tested modules: ~90%)
+
+## 📝 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
+
+## 👤 Yazar
+
+**sulegogh**
+
+- GitHub: [@sulegogh](https://github.com/sulegogh)
+
+## 🙏 Teşekkürler
+
+- NASA Kepler Mission
+- NASA Exoplanet Archive
+- CatBoost Team
+- scikit-learn Contributors
+
+## 📈 Yol Haritası
+
+### Q4 2024
+
+- ✅ Phase 1-7: Core modules & comprehensive testing
+- 🚧 Phase 8: Model refactoring & registry
+
+### Q1 2025
+
+- 📋 Phase 9: Training pipeline
+- 📋 Phase 10: API development
+- 📋 Phase 11: Explainability
+
+### Q2 2025
+
+- 📋 Phase 12: Web dashboard
+- 📋 CI/CD integration
+- 📋 Production deployment
+
 ---
 
-## 🚧 Known Limitations
-
-1. **CANDIDATE Recall:** Not 100% (37 missed out of 297)
-
-   - **Mitigation:** Acceptable for NASA standards (<20% FN rate)
-
-2. **Class Imbalance:** Training data is imbalanced (50% FP, 20% CAN)
-
-   - **Mitigation:** Class weights address this effectively
-
-3. **Feature Dependency:** Heavily relies on `koi_score` (29.59%)
-
-   - **Risk:** If `koi_score` is noisy, model performance degrades
-   - **Mitigation:** 70.41% of importance from other features
-
-4. **Slight Overfitting:** Train-Val accuracy gap = 6.95%
-   - **Status:** Acceptable (Val-Test gap only 0.91%)
-
----
-
-## 🎯 Future Enhancements
-
-### Phase 4: Optimization (Planned)
-
-1. **Threshold Tuning** (v2.1)
-
-   - Adjust prediction threshold: 0.5 → 0.40-0.45
-   - **Goal:** Push CANDIDATE recall to 90%+
-
-2. **Hyperparameter Tuning** (v2.2)
-
-   - Optuna AutoML optimization
-   - **Goal:** Find optimal depth, learning rate, iterations
-
-3. **Cross-Validation** (v2.3)
-   - 5-fold CV for robustness
-   - **Goal:** Ensure model stability
-
-### Phase 5: Ensemble (Planned)
-
-4. **Multi-Model Ensemble** (v3.0)
-   - CatBoost + LightGBM + XGBoost
-   - **Goal:** 90%+ recall, 87%+ accuracy
-
----
-
-## 📚 References & Resources
-
-### Documentation
-
-- **NASA Kepler Mission:** https://www.nasa.gov/mission_pages/kepler/
-- **CatBoost Docs:** https://catboost.ai/docs/
-- **Project Repository:** (to be added)
-
-### Related Papers
-
-1. NASA Kepler Mission: Planet Detection Metrics
-2. Thompson et al. (2018): "Planetary Candidates Observed by Kepler"
-3. CatBoost: Unbiased boosting with categorical features (Prokhorenkova et al.)
-
-### Dataset
-
-- **Source:** NASA Exoplanet Archive
-- **URL:** https://exoplanetarchive.ipac.caltech.edu/
-- **License:** Public Domain (NASA)
-
----
-
-## 👥 Contributors
-
-- **Author:** sulegogh
-- **Project:** Kepler Exoplanet AI Classification
-- **Organization:** (to be added)
-
----
-
-## 📝 Changelog
-
-### v2.0 (Current) - 2025-11-11
-
-- ✅ Implemented Manual Aggressive class weighting [3.0, 1.0, 0.5]
-- ✅ Achieved 87.54% CANDIDATE recall (target: 70%+)
-- ✅ Validated against NASA standards
-- ✅ Production-ready deployment
-
-### v1.0 (Baseline) - 2025-11-11
-
-- Initial baseline model (59.93% recall)
-- Established reference metrics
-
----
-
-## 📄 License
-
-This model is for educational and research purposes.  
-Dataset: Public Domain (NASA)  
-Code: (to be added)
-
----
-
-## 🆘 Support
-
-For issues or questions:
-
-- **Email:** (to be added)
-- **GitHub Issues:** (to be added)
-- **Documentation:** `docs/` folder
-
----
-
-**Last Updated:** 2025-11-11 19:48:06 UTC  
-**Model Status:** ✅ Production-Ready  
-**Recommended for:** Exoplanet candidate screening in NASA Kepler data  
-**Confidence Level:** High (validated against mission standards)
-
----
-
-<p align="center">
-  <strong>Built with ❤️ for space exploration and exoplanet discovery</strong><br>
-  <em>"The universe is under no obligation to make sense to you." - Neil deGrasse Tyson</em>
-</p>
+**⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!**
