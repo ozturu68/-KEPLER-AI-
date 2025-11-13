@@ -4,7 +4,7 @@ Shared test utilities and fixtures for all tests
 
 Author: sulegogh
 Date: 2025-11-13
-Version: 2.0 (Updated with data fixtures)
+Version: 3.0 (Updated with features marker and more fixtures)
 """
 
 import shutil
@@ -200,6 +200,40 @@ def sample_data_with_missing():
 
 
 # ============================================================================
+# FIXTURES: FEATURE ENGINEERING DATA
+# ============================================================================
+
+
+@pytest.fixture
+def sample_exoplanet_data():
+    """Sample exoplanet data with typical KOI features"""
+    np.random.seed(42)
+    return pd.DataFrame(
+        {
+            "koi_period": [10.5, 20.3, 5.7, 30.2, 15.8],
+            "koi_depth": [100.0, 200.0, 50.0, 150.0, 120.0],
+            "koi_duration": [2.5, 3.0, 1.5, 4.0, 2.8],
+            "koi_impact": [0.5, 0.7, 0.3, 0.6, 0.4],
+            "koi_prad": [2.0, 3.5, 1.5, 2.8, 2.2],
+            "koi_teq": [300, 450, 200, 380, 320],
+        }
+    )
+
+
+@pytest.fixture
+def sample_numerical_features():
+    """Sample numerical features for scaling/normalization"""
+    np.random.seed(42)
+    return pd.DataFrame(
+        {
+            "feature1": np.random.uniform(0, 100, 20),
+            "feature2": np.random.uniform(0, 1, 20),
+            "feature3": np.random.normal(50, 10, 20),
+        }
+    )
+
+
+# ============================================================================
 # FIXTURES: MODEL
 # ============================================================================
 
@@ -287,3 +321,7 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "slow: Slow tests")
     config.addinivalue_line("markers", "model: Tests requiring model")
     config.addinivalue_line("markers", "data: Tests requiring data")
+    config.addinivalue_line("markers", "features: Feature engineering tests")
+    config.addinivalue_line("markers", "evaluation: Evaluation and metrics tests")
+    config.addinivalue_line("markers", "api: API endpoint tests")
+    config.addinivalue_line("markers", "cli: CLI command tests")
