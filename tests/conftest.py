@@ -148,18 +148,17 @@ def sample_probabilities():
 
 @pytest.fixture
 def sample_data_with_target():
-    """Sample DataFrame with target column for cleaning tests"""
+    """Sample DataFrame with target column for cleaning and preprocessing tests"""
+    # Create larger dataset for proper stratified splitting (30 samples)
+    np.random.seed(42)
+    n_samples = 30  # 10 per class - enough for stratified split
+
     return pd.DataFrame(
         {
-            "koi_disposition": [
-                "CONFIRMED",
-                "CANDIDATE",
-                "FALSE POSITIVE",
-                "CONFIRMED",
-            ],
-            "koi_score": [0.9, 0.7, 0.3, 0.85],
-            "koi_period": [10.5, 20.3, 5.7, 12.1],
-            "koi_depth": [100.0, 200.0, 50.0, 150.0],
+            "koi_disposition": (["CONFIRMED"] * 10 + ["CANDIDATE"] * 10 + ["FALSE POSITIVE"] * 10),
+            "koi_score": np.random.uniform(0.3, 0.9, n_samples),
+            "koi_period": np.random.uniform(5.0, 50.0, n_samples),
+            "koi_depth": np.random.uniform(50.0, 500.0, n_samples),
         }
     )
 
