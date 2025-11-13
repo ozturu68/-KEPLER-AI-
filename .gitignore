@@ -203,3 +203,9 @@ Thumbs.db
 *.bak
 *.swp
 *~
+
+# Test logs (pytest.ini generates these)
+tests/logs/
+
+# Test logs (pytest.ini generates these)
+tests/logs/
